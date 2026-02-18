@@ -1,6 +1,6 @@
 const Task = require('../models/task')
 const asyncWrapper = require('../middleware/async')
-const { createCustomError } = require('../errors/custom-error')
+const { createCustomError } = require('../errors/custom-errors')
 
 
 const getAllTasks = asyncWrapper( async (req, res) => {
@@ -30,6 +30,10 @@ const getAllTasks = asyncWrapper( async (req, res) => {
 const createTask = asyncWrapper(async (req, res) => {
      const task = new Task(req.body)
         await task.save()
+
+        if(!task.name || task.name.trim() === ''){
+            return next(createCustomError('Please provide name value', 400))
+        }
         res.status(201).json({
             success: true,
             message: 'Task Created!!!'
