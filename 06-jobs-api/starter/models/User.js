@@ -1,5 +1,7 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
+require('dotenv').config();
 
 
 const UserSchema = new mongoose.Schema({
@@ -31,4 +33,16 @@ UserSchema.pre('save', async function () {
   this.password = await bcrypt.hash(this.password, salt)
 })
 
+// process.env.JWT_SECRET u still need to look into the all keys generator
+UserSchema.method.createJWT = function(){
+    return jwt.sign({userId: this._id, name: this.name}, process.env.JWT_SECRET,{
+        expiresIn: process.env.JWT_LIFE_TIME
+    })
+}
+
+// compare the passowrd
+UserSchema.methods.comparePassword = async function (candidatePaassword){
+    const isMatch = await bcrypt.compare(candidatePaassword, this.password)
+    return isMatch
+}
 module.exports = mongoose.model('User', UserSchema)
