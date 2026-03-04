@@ -33,7 +33,7 @@ const login = async (req, res) => {
     throw new UnauthenticatedError('Invalid Credentials')
   }
   // if user is verified
-  const token = user.createJWT();
+  const token = user.createJWT(); // grabbing the token
   res.status(StatusCodes.OK).json({user:{name: user.name}, token})
   res.send('Login coming soon!')
 }

@@ -34,10 +34,15 @@ UserSchema.pre('save', async function () {
 })
 
 // process.env.JWT_SECRET u still need to look into the all keys generator
-UserSchema.method.createJWT = function(){
-    return jwt.sign({userId: this._id, name: this.name}, process.env.JWT_SECRET,{
-        expiresIn: process.env.JWT_LIFE_TIME
-    })
+// This function creates a JWT (JSON Web Token) for a user. Here's a breakdown:
+// In simple terms — after a user signs up or logs in, you call user.createJWT() and send the token back to the client. 
+// The client stores it and sends it with every request to prove they're logged in, instead of sending their 
+// password every time.
+UserSchema.methods.createJWT = function(){
+    return jwt.sign({userId: this._id, name: this.name}, //PAYLOAD
+         process.env.JWT_SECRET, // SECREST KEY
+        {expiresIn: process.env.JWT_LIFE_TIME} // EXPIRES TOKEDN
+)
 }
 
 // compare the passowrd
@@ -45,4 +50,6 @@ UserSchema.methods.comparePassword = async function (candidatePaassword){
     const isMatch = await bcrypt.compare(candidatePaassword, this.password)
     return isMatch
 }
+
+
 module.exports = mongoose.model('User', UserSchema)
