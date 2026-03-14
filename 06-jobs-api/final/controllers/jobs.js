@@ -8,8 +8,8 @@ const getAllJobs = async (req, res) => {
 }
 const getJob = async (req, res) => {
   const {
-    user: { userId },
-    params: { id: jobId },
+    user: { userId }, // this is coming fron the auth middleare
+    params: { id: jobId }, // this is coming from the params
   } = req
 
   const job = await Job.findOne({
